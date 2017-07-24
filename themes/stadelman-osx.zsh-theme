@@ -21,7 +21,8 @@ function get_nr_jobs() {
 }
 
 function get_load() {
-  ps -A -o %cpu | awk '{s+=$1} END {printf "%4.2f", s}'
+  top -l 1 -s 0 | grep "CPU usage" | sed -n -e 's/^.*, \([0-9.]*\)% idle/\1/p' | awk '{printf "%6.2f%%", 100-$1}'
+  #ps -A -o %cpu | awk '{s+=$1} END {printf "%4.2f", s}'
 }
 
 # setting the prompts
