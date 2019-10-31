@@ -11,24 +11,14 @@ function git_prompt_info() {
   fi
 }
 
-
-function get_RAM {
-  top -l 1 -s 0 | grep PhysMem | sed -n -e 's/^.*PhysMem: \([0-9]*\)M.*/\1/p' | awk '{printf "%4.2f", $1/1000}'
-}
-
 function get_nr_jobs() {
-  jobs | wc -l | sed -e "s/^ *//"
-}
-
-function get_load() {
-  top -l 1 -s 0 | grep "CPU usage" | sed -n -e 's/^.*, \([0-9.]*\)% idle/\1/p' | awk '{printf "%6.2f%%", 100-$1}'
-  #ps -A -o %cpu | awk '{s+=$1} END {printf "%4.2f", s}'
+  jobs | wc -l | sed -e "s/^ *//" | awk '{if ($1 > 0) { printf "%d ", $1}}'
 }
 
 # setting the prompts
 PROMPT='%{$fg_bold[green]%}%n:%{$fg[cyan]%}%2c%{$fg_bold[blue]%}$(git_prompt_info)$(git_prompt_status)%{$fg_bold[blue]%}%{$fg_bold[red]%}$(prompt_char) % %{$reset_color%}'
 
-RPROMPT='%{$fg_bold[green]%}[$(get_nr_jobs) $(get_RAM)G $(get_load)%%] %*%{$reset_color%}'
+RPROMPT='%{$fg_bold[green]%}[$(get_nr_jobs)%*]%{$reset_color%}'
 
 # git formatting
 ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[yellow]%}?%f"
